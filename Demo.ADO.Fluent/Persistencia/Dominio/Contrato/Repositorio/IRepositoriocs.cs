@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Persistencia.Dominio.Model;
 
-namespace Persistencia.Contrato.Repositorio
+namespace Persistencia.Dominio.Contrato.Repositorio
 {
     public interface IRepositorio<T> where T : EntidadeBase
     {

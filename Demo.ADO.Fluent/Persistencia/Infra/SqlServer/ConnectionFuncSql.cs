@@ -1,29 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Persistencia.Contrato.Infra;
+using Persistencia.Infra.Contrato;
 
-namespace Persistencia.Infra
+namespace Persistencia.Infra.SqlServer
 {
-    public class ConnectionSql : IConnection
+    public class ConnectionFuncSql : IConnectionFunc
     {
         private SqlConnection conn { get; set; }
         private DbTransaction tran { get; set; }
-        private string stConnection { get; set; }
         private IDbCommand dbCommand { get; set; }
         private IList<IDbDataParameter> dbDataParameter { get; set; }
         private readonly List<string> liQuery;
- 
-        public ConnectionSql()
+
+        public ConnectionFuncSql(SqlConnection conn)
         {
-            this.stConnection = ConfigurationManager.AppSettings["conn"];
-            conn = new SqlConnection(this.stConnection);
+            this.conn = conn;
 
             this.dbCommand = new SqlCommand();
             this.dbCommand.Connection = conn;
@@ -31,13 +26,13 @@ namespace Persistencia.Infra
             liQuery = new List<string>();
         }
 
-        public IConnection Sql(string query)
+        public IConnectionFunc Command(string query)
         {
             this.liQuery.Add(query);
             return this;
         }
 
-        public IConnection Parameter(string name, object value)
+        public IConnectionFunc Parameter(string name, object value)
         {
             var parameter = dbCommand.CreateParameter();
             parameter.ParameterName = name;
@@ -47,7 +42,7 @@ namespace Persistencia.Infra
             return this;
         }
 
-        public IConnection Open()
+        public IConnectionFunc Open()
         {
             if (conn != null && conn.State != ConnectionState.Open)
                 conn.Open();
@@ -55,14 +50,14 @@ namespace Persistencia.Infra
             return this;
         }
 
-        public IConnection BeginTransaction()
+        public IConnectionFunc BeginTransaction()
         {
             if (tran != null)
                 this.tran = conn.BeginTransaction();
             return this;
         }
 
-        public IConnection Rollback()
+        public IConnectionFunc Rollback()
         {
             if (tran != null)
                 tran.Rollback();
@@ -95,7 +90,7 @@ namespace Persistencia.Infra
         {
             try
             {
-                dbCommand.CommandText = String.Join(" ", liQuery.ToArray()); 
+                dbCommand.CommandText = String.Join(" ", liQuery.ToArray());
 
                 if (dbDataParameter.Any())
                     dbDataParameter.Select(dbCommand.Parameters.Add);

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Persistencia.Contrato.Repositorio;
+using Persistencia.Dominio.Contrato.Repositorio;
 using Persistencia.Dominio.Model;
 
 namespace Persistencia.Repositorio
@@ -12,14 +12,15 @@ namespace Persistencia.Repositorio
             try
             {
                 return _connection
-                            .Sql(@"INSERT INTO Empresa (nome) VALUES (@Nome)")
+                            .Sql
+                            .Command(@"INSERT INTO Empresa (nome) VALUES (@Nome)")
                             .Open()
                             .Parameter("@Nome", entidade.Nome)
                             .ExecuteNonQuery();
             }
             finally
             {
-                _connection.Close();
+                _connection.Sql.Close();
             }
         }
 
@@ -38,7 +39,8 @@ namespace Persistencia.Repositorio
             try
             {
                 return _connection
-                            .Sql(@"SELECT * FROM Empresa WHERE Id = @Id")
+                            .Sql
+                            .Command(@"SELECT * FROM Empresa WHERE Id = @Id")
                             .Open()
                             .Parameter("@Id", id)
                             .ExecuteReader()
@@ -46,7 +48,7 @@ namespace Persistencia.Repositorio
             }
             finally
             {
-                _connection.Close();
+                _connection.Sql.Close();
             }
         }
 
@@ -55,14 +57,15 @@ namespace Persistencia.Repositorio
             try
             {
                 return _connection
-                            .Sql(@"SELECT * FROM Empresa")
+                            .Sql
+                            .Command(@"SELECT * FROM Empresa")
                             .Open()
                             .ExecuteReader()
                             .List<Empresa>();
             }
             finally
             {
-                _connection.Close();
+                _connection.Sql.Close();
             }
         }
     }

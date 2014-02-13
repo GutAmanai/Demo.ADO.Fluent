@@ -9,7 +9,7 @@ namespace Persistencia.Repositorio
 
         protected RepositorioBase()
         {
-            this._connection = Connection.GetInstance;
+            this._connection = ConnectionInfra.Instance;
         }
     }
 }
